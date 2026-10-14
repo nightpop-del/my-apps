@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>แอปของฉัน</title>
+<!-- ไอคอนตอน Add to Home Screen บน iPad/iPhone -->
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="แอปของฉัน">
+<meta name="theme-color" content="#F4F1EA">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F1EA; --card:#FFFFFF; --ink:#1F2430; --muted:#6B6F7A; --line:#E6E1D6;
+    --shadow:0 1px 2px rgba(31,36,48,.06),0 6px 18px rgba(31,36,48,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#14161B; --card:#1E2128; --ink:#EEF0F4; --muted:#9AA0AC; --line:#2B2F38;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3); }
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg)}
+  body{
+    font-family:"IBM Plex Sans Thai",system-ui,-apple-system,sans-serif;
+    color:var(--ink); min-height:100vh;
+    padding:max(28px,env(safe-area-inset-top)) 16px max(28px,env(safe-area-inset-bottom));
+    -webkit-tap-highlight-color:transparent;
+  }
+  .wrap{max-width:880px;margin:0 auto}
+  header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:28px}
+  .hello{font-size:15px;color:var(--muted);font-weight:500}
+  h1{font-size:30px;font-weight:700;letter-spacing:-.01em;line-height:1.2;margin-top:2px}
+  .clock{text-align:right}
+  .clock .t{font-size:30px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1}
+  .clock .d{font-size:13px;color:var(--muted)}
+  section{margin-bottom:28px}
+  h2{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.04em;margin:0 4px 10px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+  a.app{
+    display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:14px 16px;box-shadow:var(--shadow);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  a.app:active{transform:scale(.97)}
+  @media (hover:hover){ a.app:hover{transform:translateY(-2px)} }
+  .ic{
+    flex:none;width:52px;height:52px;border-radius:14px;
+    display:grid;place-items:center;font-size:26px;
+  }
+  .name{font-size:17px;font-weight:600;line-height:1.3}
+  .sub{font-size:13px;color:var(--muted);margin-top:1px}
+  .arrow{margin-left:auto;color:var(--muted);font-size:20px;opacity:.6}
+  footer{text-align:center;font-size:12px;color:var(--muted);margin-top:8px}
+  @media (max-width:480px){ h1{font-size:24px} .clock .t{font-size:24px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="hello" id="hello">สวัสดี</div>
+      <h1>แอปของฉัน</h1>
+    </div>
+    <div class="clock">
+      <div class="t" id="time">--:--</div>
+      <div class="d" id="date"></div>
+    </div>
+  </header>
+  <main id="groups"></main>
+  <footer>แตะที่แอปเพื่อเปิด</footer>
+</div>
+
+<script>
+/* ===========================================================
+   แก้ไข / เพิ่มแอปตรงนี้
+   - name = ชื่อบนปุ่ม   - sub = คำอธิบายสั้น (เว้นว่าง "" ได้)
+   - icon = อีโมจิ      - color = สีพื้นไอคอน
+   - url  = ลิงก์ที่ลงท้ายด้วย /exec
+   =========================================================== */
+const GROUPS = [
+  {
+    title: "วางแผนชีวิต",
+    apps: [
+      { name:"สมุดวัน", sub:"", icon:"📓", color:"#FCE7C8",
+        url:"https://script.google.com/macros/s/AKfycbx1fBAp0xD8Bq52OoR6MjeNnBZvVj-kTvFSiivqeZLjr03kl2aY1Kr3-K8XvJoFZHsU/exec" },
+      { name:"ตารางพัฒนาตนเอง", sub:"ประจำวัน", icon:"⏰", color:"#D8ECF8",
+        url:"https://script.google.com/macros/s/AKfycby4j23ibz86Joi5SdiJAJMcqY-SEUuMScuPeWHbFy1JA8dWz3c0rUQEFSSUDp-fFAB1/exec" },
+      { name:"Plan Life", sub:"", icon:"🧭", color:"#DDF1E4",
+        url:"https://script.google.com/macros/s/AKfycbzl0NHJS0xHMm2yhZf1C5CQM5k3WXejXDraiNdtU2b74joIpg1Wrz2PUKTRf6LsoMY7rA/exec" },
+    ]
+  },
+  {
+    title: "การเงิน & ซื้อของ",
+    apps: [
+      { name:"พอร์ตลงทุน & ปันผล", sub:"", icon:"📈", color:"#E4E2F8",
+        url:"https://script.google.com/macros/s/AKfycbwUfsjG1tgN1-bUBppa7HincFNo_eE1NmekZOPPTrOKNZtSlcLGRhLboV-Und6ij43c/exec" },
+      { name:"Buy", sub:"", icon:"🛒", color:"#F9DCDC",
+        url:"https://script.google.com/macros/s/AKfycbxNEcZonCsSikDe4oVeaDuWLG_IoU2QTQGJCipGjBAbgmgX9q3sxr5626kIBAXnzTPS8g/exec" },
+      { name:"Spec Blueprint", sub:"คู่มืออ่านสเปคฉบับพกพา", icon:"📐", color:"#E9E6DE",
+        url:"https://script.google.com/macros/s/AKfycbwj6xpP8f8rof6cAIH7ANctwtJuiFhctxM4d660u_8LziNswlTEsMmZAZgvMpYYor5eXw/exec" },
+    ]
+  }
+];
+/* ====================== จบส่วนแก้ไข ====================== */
+
+const main = document.getElementById("groups");
+GROUPS.forEach(g => {
+  const sec = document.createElement("section");
+  sec.innerHTML = `<h2>${g.title}</h2><div class="grid"></div>`;
+  const grid = sec.querySelector(".grid");
+  g.apps.forEach(a => {
+    const el = document.createElement("a");
+    el.className = "app";
+    el.href = a.url;
+    el.innerHTML =
+      `<span class="ic" style="background:${a.color}">${a.icon}</span>
+       <span><div class="name">${a.name}</div>${a.sub ? `<div class="sub">${a.sub}</div>` : ""}</span>
+       <span class="arrow">›</span>`;
+    grid.appendChild(el);
+  });
+  main.appendChild(sec);
+});
+
+function tick(){
+  const now = new Date();
+  const h = now.getHours();
+  document.getElementById("hello").textContent =
+    h < 12 ? "สวัสดีตอนเช้า ☀️" : h < 17 ? "สวัสดีตอนบ่าย 🌤️" : "สวัสดีตอนเย็น 🌙";
+  document.getElementById("time").textContent =
+    now.toLocaleTimeString("th-TH", { hour:"2-digit", minute:"2-digit" });
+  document.getElementById("date").textContent =
+    now.toLocaleDateString("th-TH", { weekday:"long", day:"numeric", month:"short", year:"numeric" });
+}
+tick(); setInterval(tick, 15000);
+</script>
+</body>
+</html>
